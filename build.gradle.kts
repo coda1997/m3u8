@@ -34,7 +34,6 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:1.4.1")
             }
         }
-        
         val nativeTest by getting
 
     }
