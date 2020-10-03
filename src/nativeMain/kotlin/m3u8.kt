@@ -5,8 +5,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
-import platform.posix.open
-
+import platform.posix.*
 
 fun m3u8Download(url: String, outputPath: String, num:Int = 50) = GlobalScope.launch {
     val client = HttpClient()
@@ -28,7 +27,6 @@ fun m3u8Download(url: String, outputPath: String, num:Int = 50) = GlobalScope.la
         channel.close()
     }
     //TODO
-//    val file = open()
 
     channel.consumeEach {
 
@@ -39,6 +37,9 @@ fun m3u8Download(url: String, outputPath: String, num:Int = 50) = GlobalScope.la
     //done
 }
 
+fun sample() {
+    val file = fopen(__filename = "filename", __mode = "r")
+}
 
 fun formatCheck(value: String): Boolean {
     val contents = value.split('\n')
