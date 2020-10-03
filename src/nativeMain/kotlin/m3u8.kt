@@ -2,9 +2,13 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
+import platform.posix.open
 
-fun m3u8Download(url: String, outputPath: String) = GlobalScope.launch {
+
+fun m3u8Download(url: String, outputPath: String, num:Int = 50) = GlobalScope.launch {
     val client = HttpClient()
     val m3u8Header = client.get<String> {
         url(url)
@@ -14,16 +18,20 @@ fun m3u8Download(url: String, outputPath: String) = GlobalScope.launch {
         return@launch
     }
 
+    val channel = Channel<String>(capacity = num)
+
     //1st, to parser the file of m3u8, getting file path of each slides
-    m3u8Header.split('\n').filter { !it.startsWith('#') }.map {
-        val res = async {
-            client.get<ByteArray> {
-                url(it)
-            }
+    async {
+        m3u8Header.split('\n').filter { !it.startsWith('#') }.forEach {
+            channel.send(it)
         }
-        return@map res
-    }.forEach { slice->
-        //TODO
+        channel.close()
+    }
+    //TODO
+//    val file = open()
+
+    channel.consumeEach {
+
     }
 
     //2nd, using multi-thread to fetch all videos and con them.
